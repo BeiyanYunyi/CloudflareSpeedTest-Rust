@@ -1,0 +1,17 @@
+[package]
+name = "cfst"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+reqwest = { version = "0.11", features = ["json"] }
+tokio = { version = "1", features = ["full"] }
+surge-ping = "0.5.2"
+iprange = "0.6.7"
+ipnet = "2.4.0"
+futures = "0.3.21"
+random-number = "0.1.7"
+indicatif = "0.16.2"
+relative-path = "1.7.0"
