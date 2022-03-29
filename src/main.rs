@@ -11,11 +11,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     let download_res = controller::download_controller(ips_to_download).await?;
     let mut cli_output_str = String::from("测试结果：\n");
-    let mut file_output_str = String::from("IP,Ping,Speed (MiB/s)\n");
+    let mut file_output_str = String::from("IP,Ping,Speed (MB/s)\n");
     for res in download_res {
         let mb_s: f32 = (res.2 as f32) / 1024f32 / 1024f32;
         let cli_line = format!(
-            "IP: {:15}, Ping: {:4}, 速度 (MiB/s): {:5}\n",
+            "IP: {:15}, Ping: {:4}, 速度 (MB/s): {:5}\n",
             res.0,
             res.1.as_millis(),
             mb_s,
