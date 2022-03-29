@@ -1,7 +1,7 @@
 use reqwest::Url;
 use std::net::{IpAddr, SocketAddr};
 
-pub async fn download(ip: IpAddr) -> Result<usize, Box<dyn std::error::Error>> {
+pub async fn download(ip: IpAddr) -> Result<f64, Box<dyn std::error::Error>> {
     let url_string = format!(
         "https://speed.cloudflare.com/__down?bytes={}",
         1024 * 1024 * 1024
@@ -15,7 +15,7 @@ pub async fn download(ip: IpAddr) -> Result<usize, Box<dyn std::error::Error>> {
     let req = client.get(url).build().unwrap();
     let mut resp_raw = match client.execute(req).await {
         Ok(t) => t,
-        Err(_) => return Ok(0usize),
+        Err(_) => return Ok(0f64),
     };
     let mut data_len: usize = 0;
     let now = std::time::Instant::now();
@@ -27,5 +27,5 @@ pub async fn download(ip: IpAddr) -> Result<usize, Box<dyn std::error::Error>> {
             break;
         }
     }
-    Ok(data_len / now.elapsed().as_secs() as usize)
+    Ok(data_len as f64 / now.elapsed().as_secs_f64())
 }

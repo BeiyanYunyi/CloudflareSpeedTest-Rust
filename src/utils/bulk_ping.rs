@@ -10,12 +10,12 @@ pub async fn bulk_ping(
     for ip in ips {
         tasks.push(tokio::spawn(ping(client.clone(), ip)))
     }
-    let bbb = join_all(tasks).await;
+    let task_results = join_all(tasks).await;
     let mut result = Vec::new();
-    for ccc in bbb {
-        let ddd = ccc.unwrap().unwrap();
-        if ddd.1 != std::time::Duration::from_secs(2) {
-            result.push(ddd);
+    for task_result in task_results {
+        let task_result_unwrapped = task_result.unwrap().unwrap();
+        if task_result_unwrapped.1 != std::time::Duration::from_secs(2) {
+            result.push(task_result_unwrapped);
         }
     }
     Ok(result)

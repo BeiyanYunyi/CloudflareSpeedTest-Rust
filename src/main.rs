@@ -13,14 +13,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut cli_output_str = String::from("测试结果：\n");
     let mut file_output_str = String::from("IP,Ping,Speed (MB/s)\n");
     for res in download_res {
-        let mb_s: f32 = (res.2 as f32) / 1024f32 / 1024f32;
+        let mb_s = res.2 / 1024f64 / 1024f64;
         let cli_line = format!(
-            "IP: {:15}, Ping: {:4}, 速度 (MB/s): {:5}\n",
+            "IP: {:15}, Ping: {:4}, 速度 (MB/s): {:.5}\n",
             res.0,
             res.1.as_millis(),
             mb_s,
         );
-        let file_line = format!("{:15},{:4},{:5}\n", res.0, res.1.as_millis(), mb_s);
+        let file_line = format!("{:15},{:4},{:.5}\n", res.0, res.1.as_millis(), mb_s);
         cli_output_str.push_str(cli_line.as_str());
         file_output_str.push_str(file_line.as_str());
     }
