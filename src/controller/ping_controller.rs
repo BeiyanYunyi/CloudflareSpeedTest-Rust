@@ -4,26 +4,26 @@ use indicatif::ProgressBar;
 use ipnet::Ipv4Net;
 use iprange::IpRange;
 use random_number::random;
-use std::net::IpAddr;
+use std::net::{IpAddr, Ipv4Addr};
 use std::time::Duration;
 
 /// ## get_all_ips_v4
 /// 获取 IPv4 IP，并返回
 async fn get_all_ips_v4() -> Result<Vec<IpAddr>, Box<dyn std::error::Error>> {
-    println!("正在从 CloudFlare 获取 IP");
+    println!("正在从 Cloudflare 获取 IP");
     let client = reqwest::ClientBuilder::new()
         .timeout(Duration::from_secs(5))
         .build()?;
     let cf_ips = client.get("https://www.cloudflare.com/ips-v4").send().await;
     let ip_range: IpRange<Ipv4Net> = match cf_ips {
         Ok(res) => {
-            println!("从 CloudFlare 获取 IP 成功");
+            println!("从 Cloudflare 获取 IP 成功");
             let res = res.text().await?;
             let res: Vec<&str> = res.trim().split("\n").collect();
             res.iter().map(|s| s.parse().unwrap()).collect()
         }
         Err(_) => {
-            println!("从 CloudFlare 获取 IP 失败，使用内置 IP");
+            println!("从 Cloudflare 获取 IP 失败，使用内置 IP");
             [
                 "173.245.48.0/20",
                 "103.21.244.0/22",
@@ -46,13 +46,10 @@ async fn get_all_ips_v4() -> Result<Vec<IpAddr>, Box<dyn std::error::Error>> {
             .collect()
         }
     };
-    let mut ips_vec_temp = Vec::new();
-    ip_range
+    let mut ips_vec_temp: Vec<Ipv4Addr> = ip_range
         .iter()
         .flat_map(|ipv4_net| ipv4_net.hosts())
-        .for_each(|bbb| {
-            ips_vec_temp.push(bbb);
-        });
+        .collect();
     let mut ips_vec = Vec::new();
     let rand_num = Input::new()
         .with_prompt::<String>(format!(
@@ -68,7 +65,7 @@ async fn get_all_ips_v4() -> Result<Vec<IpAddr>, Box<dyn std::error::Error>> {
         })
         .interact_text()
         .expect("输入无效");
-    for _i in 0..rand_num {
+    for _ in 0..rand_num {
         let len = ips_vec_temp.len();
         ips_vec.push(IpAddr::V4(ips_vec_temp.swap_remove(random!(0..len))))
     }
