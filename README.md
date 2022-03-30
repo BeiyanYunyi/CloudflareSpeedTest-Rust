@@ -1,6 +1,6 @@
 # Cloudflare Speed Test in Rust
 
-[![GitHub license](https://img.shields.io/github/license/lixiang810/cloudflare-speed-test-rust.svg?style=flat-square&label=License&color=00ADD8&logo=github)](https://github.com/XIU2/CloudflareSpeedTest)
+[![GitHub license](https://img.shields.io/github/license/lixiang810/cloudflare-speed-test-rust.svg?style=flat-square&label=License&color=00ADD8&logo=github)](https://github.com/lixiang810/cloudflare-speed-test-rust)
 
 用 Rust 写的 Cloudflare Speed Test，练手用。
 
@@ -18,6 +18,10 @@ sudo ./target/release/cfst # Linux 下需要 sudo，Windows 下直接双击运�
 - IBMYes（已删除）—— bash 和 bat
 - better-cloudflare-ip（已删除）—— bash 和 bat
 - [CloudflareSpeedTest](https://github.com/XIU2/CloudflareSpeedTest) —— Go
+
+## 隐私说明
+
+本项目会且只会与 Cloudflare 服务器进行 https 和 icmp 通信。
 
 ## 免责声明
 
