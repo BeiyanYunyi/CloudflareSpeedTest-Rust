@@ -2,9 +2,11 @@ use crate::utils::ping;
 use futures::future::join_all;
 use surge_ping::{Client, Config};
 
+/// ## bulk_ping
+/// 批量 Ping
 pub async fn bulk_ping(
-    ips: Vec<std::net::Ipv4Addr>,
-) -> Result<Vec<(std::net::Ipv4Addr, std::time::Duration)>, Box<dyn std::error::Error>> {
+    ips: Vec<std::net::IpAddr>,
+) -> Result<Vec<(std::net::IpAddr, std::time::Duration)>, Box<dyn std::error::Error>> {
     let mut tasks = Vec::new();
     let client = Client::new(&Config::default()).await?;
     for ip in ips {

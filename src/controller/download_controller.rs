@@ -4,6 +4,8 @@ use std::error::Error;
 use std::net::IpAddr;
 use std::time::Duration;
 
+/// ## download_controller
+/// 下载测速
 pub async fn download_controller(
     ips: Vec<(IpAddr, Duration)>,
 ) -> Result<Vec<(IpAddr, Duration, f64)>, Box<dyn Error>> {

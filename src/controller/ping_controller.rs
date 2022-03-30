@@ -1,32 +1,51 @@
-use crate::utils::{bulk_ping, pick_usize};
+use crate::utils::bulk_ping;
+use dialoguer::Input;
 use indicatif::ProgressBar;
 use ipnet::Ipv4Net;
 use iprange::IpRange;
 use random_number::random;
-use std::net::Ipv4Addr;
+use std::net::IpAddr;
 use std::time::Duration;
 
-fn get_all_ips_v4() -> Vec<Ipv4Addr> {
-    let ip_range: IpRange<Ipv4Net> = [
-        "173.245.48.0/20",
-        "103.21.244.0/22",
-        "103.22.200.0/22",
-        "103.31.4.0/22",
-        "141.101.64.0/18",
-        "108.162.192.0/18",
-        "190.93.240.0/20",
-        "188.114.96.0/20",
-        "197.234.240.0/22",
-        "198.41.128.0/17",
-        "162.158.0.0/15",
-        "104.16.0.0/13",
-        "104.24.0.0/14",
-        "172.64.0.0/13",
-        "131.0.72.0/22",
-    ]
-    .iter()
-    .map(|s| s.parse().unwrap())
-    .collect();
+/// ## get_all_ips_v4
+/// 获取 IPv4 IP，并返回
+async fn get_all_ips_v4() -> Result<Vec<IpAddr>, Box<dyn std::error::Error>> {
+    println!("正在从 CloudFlare 获取 IP");
+    let client = reqwest::ClientBuilder::new()
+        .timeout(Duration::from_secs(5))
+        .build()?;
+    let cf_ips = client.get("https://www.cloudflare.com/ips-v4").send().await;
+    let ip_range: IpRange<Ipv4Net> = match cf_ips {
+        Ok(res) => {
+            println!("从 CloudFlare 获取 IP 成功");
+            let res = res.text().await?;
+            let res: Vec<&str> = res.trim().split("\n").collect();
+            res.iter().map(|s| s.parse().unwrap()).collect()
+        }
+        Err(_) => {
+            println!("从 CloudFlare 获取 IP 失败，使用内置 IP");
+            [
+                "173.245.48.0/20",
+                "103.21.244.0/22",
+                "103.22.200.0/22",
+                "103.31.4.0/22",
+                "141.101.64.0/18",
+                "108.162.192.0/18",
+                "190.93.240.0/20",
+                "188.114.96.0/20",
+                "197.234.240.0/22",
+                "198.41.128.0/17",
+                "162.158.0.0/15",
+                "104.16.0.0/13",
+                "104.24.0.0/14",
+                "172.64.0.0/13",
+                "131.0.72.0/22",
+            ]
+            .iter()
+            .map(|s| s.parse().unwrap())
+            .collect()
+        }
+    };
     let mut ips_vec_temp = Vec::new();
     ip_range
         .iter()
@@ -35,21 +54,31 @@ fn get_all_ips_v4() -> Vec<Ipv4Addr> {
             ips_vec_temp.push(bbb);
         });
     let mut ips_vec = Vec::new();
-    let rand_num = pick_usize(
-        0,
-        ips_vec_temp.len(),
-        ips_vec_temp.len() / 100,
-        "请输入希望测试的 IP 数",
-    );
+    let rand_num = Input::new()
+        .with_prompt::<String>(format!(
+            "请输入希望测试的 IP 数 (0 ≤ x ≤ {})",
+            ips_vec_temp.len()
+        ))
+        .default(ips_vec_temp.len() / 100)
+        .validate_with(|input: &usize| -> Result<(), &str> {
+            if *input > ips_vec_temp.len() {
+                return Err("输入不合法");
+            }
+            Ok(())
+        })
+        .interact_text()
+        .expect("输入无效");
     for _i in 0..rand_num {
         let len = ips_vec_temp.len();
-        ips_vec.push(ips_vec_temp.swap_remove(random!(0..len)))
+        ips_vec.push(IpAddr::V4(ips_vec_temp.swap_remove(random!(0..len))))
     }
-    return ips_vec;
+    return Ok(ips_vec);
 }
 
-pub async fn ping_controller() -> Result<Vec<(Ipv4Addr, Duration)>, Box<dyn std::error::Error>> {
-    let mut ips = get_all_ips_v4();
+/// ## ping_controller
+/// Ping 测试
+pub async fn ping_controller() -> Result<Vec<(IpAddr, Duration)>, Box<dyn std::error::Error>> {
+    let mut ips = get_all_ips_v4().await?;
     let pb = ProgressBar::new(ips.len().try_into().unwrap());
     println!("将对 {} 个 ip 进行 ping 测试", ips.len());
     pb.tick();

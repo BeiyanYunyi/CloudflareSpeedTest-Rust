@@ -1,15 +1,16 @@
-use std::net::{IpAddr, Ipv4Addr};
+use std::net::IpAddr;
 use std::time::Duration;
 use surge_ping::{Client, IcmpPacket};
 use tokio::time;
 
+/// ## ping
+/// Ping 一个 IP
 pub async fn ping(
     client: Client,
-    ip: Ipv4Addr,
-) -> Result<(Ipv4Addr, Duration), Box<dyn std::error::Error + Send + Sync>> {
-    let addr = IpAddr::V4(ip);
+    ip: IpAddr,
+) -> Result<(IpAddr, Duration), Box<dyn std::error::Error + Send + Sync>> {
     let timeout = Duration::from_secs(2);
-    let mut pinger = client.pinger(addr).await;
+    let mut pinger = client.pinger(ip).await;
     pinger.size(56).timeout(timeout);
     let mut avg_time = Duration::from_secs(0);
     let mut interval = time::interval(Duration::from_secs(1));

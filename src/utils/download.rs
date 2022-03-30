@@ -1,6 +1,8 @@
 use reqwest::Url;
 use std::net::{IpAddr, SocketAddr};
 
+/// ## Download
+/// 测试下载速度，返回值为 `Byte/s`
 pub async fn download(ip: IpAddr) -> Result<f64, Box<dyn std::error::Error>> {
     let url_string = format!(
         "https://speed.cloudflare.com/__down?bytes={}",

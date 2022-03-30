@@ -1,13 +1,13 @@
 mod controller;
+use dialoguer::Confirm;
 mod utils;
-use std::net::IpAddr;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let ping_res = controller::ping_controller().await?;
     let mut ips_to_download = Vec::new();
     for a_ping_res in ping_res {
-        ips_to_download.push((IpAddr::V4(a_ping_res.0), a_ping_res.1));
+        ips_to_download.push((a_ping_res.0, a_ping_res.1));
     }
     let download_res = controller::download_controller(ips_to_download).await?;
     let mut cli_output_str = String::from("测试结果：\n");
@@ -25,9 +25,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         file_output_str.push_str(file_line.as_str());
     }
     print!("{}", cli_output_str);
-    let mut div = std::env::current_dir().expect("无法获取程序运行目录");
-    div.push("result.csv");
-    std::fs::write(div, file_output_str).expect("文件写入失败");
-    println!("结果已保存至运行目录的 result.csv 下");
+    let if_save_file = Confirm::new().with_prompt("是否保存结果？").interact()?;
+    if if_save_file {
+        let mut div = std::env::current_dir().expect("无法获取程序运行目录");
+        div.push("result.csv");
+        std::fs::write(div, file_output_str).expect("文件写入失败");
+        println!("结果已保存至运行目录的 result.csv 下");
+        std::thread::sleep(std::time::Duration::from_secs(3));
+    }
     Ok(())
 }
