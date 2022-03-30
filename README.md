@@ -1,6 +1,6 @@
 # Cloudflare Speed Test in Rust
 
-[![GitHub license](https://img.shields.io/github/license/lixiang810/cloudflare-speed-test-rust.svg?style=flat-square&label=License&color=00ADD8&logo=github)](https://github.com/lixiang810/cloudflare-speed-test-rust)
+[![GitHub stars](https://img.shields.io/github/stars/lixiang810/cloudflare-speed-test-rust?style=for-the-badge)](https://github.com/lixiang810/cloudflare-speed-test-rust/stargazers) [![GitHub license](https://img.shields.io/github/license/lixiang810/cloudflare-speed-test-rust?style=for-the-badge)](https://github.com/lixiang810/cloudflare-speed-test-rust/blob/main/LICENSE)
 
 用 Rust 写的 Cloudflare Speed Test，练手用。
 
