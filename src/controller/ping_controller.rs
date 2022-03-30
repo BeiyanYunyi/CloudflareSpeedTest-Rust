@@ -10,20 +10,20 @@ use std::time::Duration;
 /// ## get_all_ips_v4
 /// 获取 IPv4 IP，并返回
 async fn get_all_ips_v4() -> Result<Vec<IpAddr>, Box<dyn std::error::Error>> {
-    println!("正在从 Cloudflare 获取 IP");
+    println!("正在从 Cloudflare 获取 IP 列表");
     let client = reqwest::ClientBuilder::new()
         .timeout(Duration::from_secs(5))
         .build()?;
     let cf_ips = client.get("https://www.cloudflare.com/ips-v4").send().await;
     let ip_range: IpRange<Ipv4Net> = match cf_ips {
         Ok(res) => {
-            println!("从 Cloudflare 获取 IP 成功");
+            println!("从 Cloudflare 获取 IP 列表成功");
             let res = res.text().await?;
             let res: Vec<&str> = res.trim().split("\n").collect();
             res.iter().map(|s| s.parse().unwrap()).collect()
         }
         Err(_) => {
-            println!("从 Cloudflare 获取 IP 失败，使用内置 IP");
+            println!("从 Cloudflare 获取 IP 列表失败，使用内置 IP 列表");
             [
                 "173.245.48.0/20",
                 "103.21.244.0/22",
@@ -51,21 +51,23 @@ async fn get_all_ips_v4() -> Result<Vec<IpAddr>, Box<dyn std::error::Error>> {
         .flat_map(|ipv4_net| ipv4_net.hosts())
         .collect();
     let mut ips_vec = Vec::new();
+    const IP_CHUNK: usize = 4096;
     let rand_num = Input::new()
         .with_prompt::<String>(format!(
-            "请输入希望测试的 IP 数 (0 ≤ x ≤ {})",
-            ips_vec_temp.len()
+            "请输入测试轮数 (0 ≤ x ≤ {}) (每轮 {} 个，用时 10 秒，互不重复) ",
+            ips_vec_temp.len() / IP_CHUNK,
+            IP_CHUNK,
         ))
-        .default(ips_vec_temp.len() / 100)
+        .default(1)
         .validate_with(|input: &usize| -> Result<(), &str> {
-            if *input > ips_vec_temp.len() {
+            if *input * IP_CHUNK > ips_vec_temp.len() {
                 return Err("输入不合法");
             }
             Ok(())
         })
         .interact_text()
         .expect("输入无效");
-    for _ in 0..rand_num {
+    for _ in 0..(rand_num * IP_CHUNK) {
         let len = ips_vec_temp.len();
         ips_vec.push(IpAddr::V4(ips_vec_temp.swap_remove(random!(0..len))))
     }
