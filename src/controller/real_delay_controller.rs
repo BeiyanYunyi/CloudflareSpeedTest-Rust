@@ -21,13 +21,14 @@ pub async fn real_delay_controller(
         }
         let res = bulk_real_delay(bulk_vec).await?;
         res.iter().for_each(|item| {
-            pb.inc(1);
-            res_vec.push(*item);
+            if res_vec.len() < 10 {
+                pb.inc(1);
+                res_vec.push(*item);
+            }
         });
         i_temp += 10;
     }
     res_vec.sort_by(|a, b| a.real_delay.cmp(&b.real_delay));
-    res_vec.truncate(10);
     pb.finish();
     Ok(res_vec)
 }
