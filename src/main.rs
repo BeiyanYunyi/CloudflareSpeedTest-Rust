@@ -5,22 +5,26 @@ mod utils;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let ping_res = controller::ping_controller().await?;
-    let mut ips_to_download = Vec::new();
-    for a_ping_res in ping_res {
-        ips_to_download.push((a_ping_res.0, a_ping_res.1));
-    }
-    let download_res = controller::download_controller(ips_to_download).await?;
+    let real_delay_res = controller::real_delay_controller(ping_res).await?;
+    let download_res = controller::download_controller(real_delay_res).await?;
     let mut cli_output_str = String::from("测试结果：\n");
-    let mut file_output_str = String::from("IP,Ping,Speed (MB/s)\n");
+    let mut file_output_str = String::from("IP,Ping,Real Delay,Speed (MB/s)\n");
     for res in download_res {
-        let mb_s = res.2 / 1024f64 / 1024f64;
+        let mb_s = res.speed / 1024f64 / 1024f64;
         let cli_line = format!(
-            "IP: {:15}, Ping: {:4}, 速度 (MB/s): {:.5}\n",
-            res.0,
-            res.1.as_millis(),
+            "IP: {:15}, Ping: {:4}, 真实延迟: {:4}, 速度: {:.5} MB/s\n",
+            res.ip,
+            res.ping.as_millis(),
+            res.real_delay.as_millis(),
             mb_s,
         );
-        let file_line = format!("{:15},{:4},{:.5}\n", res.0, res.1.as_millis(), mb_s);
+        let file_line = format!(
+            "{:15},{:4},{:4},{:.5}\n",
+            res.ip,
+            res.ping.as_millis(),
+            res.real_delay.as_millis(),
+            mb_s
+        );
         cli_output_str.push_str(cli_line.as_str());
         file_output_str.push_str(file_line.as_str());
     }

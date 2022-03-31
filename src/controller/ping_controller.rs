@@ -100,6 +100,5 @@ pub async fn ping_controller() -> Result<Vec<(IpAddr, Duration)>, Box<dyn std::e
         pb.inc(BULK_NUM.try_into().unwrap());
     }
     result.sort_by(|a, b| a.1.cmp(&b.1));
-    result.truncate(10);
     Ok(result)
 }
