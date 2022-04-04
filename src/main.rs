@@ -19,7 +19,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             mb_s,
         );
         let file_line = format!(
-            "{:15},{:4},{:4},{:.5}\n",
+            "{},{},{},{:.5}\n",
             res.ip,
             res.ping.as_millis(),
             res.real_delay.as_millis(),
