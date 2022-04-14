@@ -1,3 +1,4 @@
+use crate::i18n::interface::I18nItems;
 use crate::utils::bulk_real_delay;
 use crate::utils::RealDelayRes;
 use indicatif::ProgressBar;
@@ -7,10 +8,11 @@ use std::time::Duration;
 
 pub async fn real_delay_controller(
     ips: Vec<(IpAddr, Duration)>,
+    i18n: &I18nItems<'_>,
 ) -> Result<Vec<RealDelayRes>, Box<dyn Error>> {
     let pb = ProgressBar::new(10);
     pb.tick();
-    pb.println("将进行真实延迟测试以获得 10 个可用 ip ");
+    pb.println(format!("{}", i18n.real_delay_controller_i18n));
     let mut res_vec = Vec::new();
     let mut i_temp = 0;
     while res_vec.len() < 10 {

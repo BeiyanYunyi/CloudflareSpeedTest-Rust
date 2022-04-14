@@ -1,3 +1,4 @@
+use crate::i18n::interface::I18nItems;
 use crate::utils::download;
 use crate::utils::RealDelayRes;
 use indicatif::ProgressBar;
@@ -17,13 +18,22 @@ pub struct DownloadRes {
 /// 下载测速
 pub async fn download_controller(
     ips: Vec<RealDelayRes>,
+    i18n: &I18nItems<'_>,
 ) -> Result<Vec<DownloadRes>, Box<dyn Error>> {
     let pb = ProgressBar::new(ips.len().try_into().unwrap());
     pb.tick();
-    pb.println(format!("将对 {} 个 ip 进行下载速度测试", ips.len()));
+    pb.println(format!(
+        "{} {} {}",
+        i18n.download_controller_i18n.total_before_num,
+        ips.len(),
+        i18n.download_controller_i18n.total_after_num,
+    ));
     let mut result_vec = Vec::new();
     for ip in ips {
-        pb.println(format!("正在测试: {}", ip.ip));
+        pb.println(format!(
+            "{}{}",
+            i18n.download_controller_i18n.testing, ip.ip
+        ));
         let res = download(ip.ip).await?;
         result_vec.push(DownloadRes {
             ip: ip.ip,

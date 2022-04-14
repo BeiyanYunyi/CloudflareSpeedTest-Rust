@@ -1,3 +1,4 @@
+use crate::i18n::interface::I18nItems;
 use crate::utils::bulk_ping;
 use dialoguer::Input;
 use indicatif::ProgressBar;
@@ -9,21 +10,28 @@ use std::time::Duration;
 
 /// ## get_all_ips_v4
 /// 获取 IPv4 IP，并返回
-async fn get_all_ips_v4() -> Result<Vec<IpAddr>, Box<dyn std::error::Error>> {
-    println!("正在从 Cloudflare 获取 IP 列表");
+async fn get_all_ips_v4(i18n: &I18nItems<'_>) -> Result<Vec<IpAddr>, Box<dyn std::error::Error>> {
+    println!("{}", i18n.ping_controller_i18n.getting_ips_from_cloudflare);
     let client = reqwest::ClientBuilder::new()
         .timeout(Duration::from_secs(5))
         .build()?;
     let cf_ips = client.get("https://www.cloudflare.com/ips-v4").send().await;
     let ip_range: IpRange<Ipv4Net> = match cf_ips {
         Ok(res) => {
-            println!("从 Cloudflare 获取 IP 列表成功");
+            println!(
+                "{}",
+                i18n.ping_controller_i18n
+                    .getting_ips_from_cloudflare_success
+            );
             let res = res.text().await?;
             let res: Vec<&str> = res.trim().split("\n").collect();
             res.iter().map(|s| s.parse().unwrap()).collect()
         }
         Err(_) => {
-            println!("从 Cloudflare 获取 IP 列表失败，使用内置 IP 列表");
+            println!(
+                "{}",
+                i18n.ping_controller_i18n.getting_ips_from_cloudflare_failed
+            );
             [
                 "173.245.48.0/20",
                 "103.21.244.0/22",
@@ -54,19 +62,22 @@ async fn get_all_ips_v4() -> Result<Vec<IpAddr>, Box<dyn std::error::Error>> {
     const IP_CHUNK: usize = 4096;
     let rand_num = Input::new()
         .with_prompt::<String>(format!(
-            "请输入测试轮数 (0 ≤ x ≤ {}) (每轮 {} 个，用时 10 秒，互不重复) ",
+            "{}{}{}{}{}",
+            i18n.ping_controller_i18n.prompt_part1,
             ips_vec_temp.len() / IP_CHUNK,
+            i18n.ping_controller_i18n.prompt_part2,
             IP_CHUNK,
+            i18n.ping_controller_i18n.prompt_part3,
         ))
         .default(1)
         .validate_with(|input: &usize| -> Result<(), &str> {
             if *input * IP_CHUNK > ips_vec_temp.len() {
-                return Err("输入不合法");
+                return Err(i18n.ping_controller_i18n.invalid_input);
             }
             Ok(())
         })
         .interact_text()
-        .expect("输入无效");
+        .expect(i18n.ping_controller_i18n.invalid_input);
     for _ in 0..(rand_num * IP_CHUNK) {
         let len = ips_vec_temp.len();
         ips_vec.push(IpAddr::V4(ips_vec_temp.swap_remove(random!(0..len))))
@@ -76,10 +87,17 @@ async fn get_all_ips_v4() -> Result<Vec<IpAddr>, Box<dyn std::error::Error>> {
 
 /// ## ping_controller
 /// Ping 测试
-pub async fn ping_controller() -> Result<Vec<(IpAddr, Duration)>, Box<dyn std::error::Error>> {
-    let mut ips = get_all_ips_v4().await?;
+pub async fn ping_controller(
+    i18n: &I18nItems<'_>,
+) -> Result<Vec<(IpAddr, Duration)>, Box<dyn std::error::Error>> {
+    let mut ips = get_all_ips_v4(i18n).await?;
     let pb = ProgressBar::new(ips.len().try_into().unwrap());
-    println!("将对 {} 个 ip 进行 ping 测试", ips.len());
+    println!(
+        "{} {} {}",
+        i18n.ping_controller_i18n.will_test_before_num,
+        ips.len(),
+        i18n.ping_controller_i18n.will_test_after_num
+    );
     pb.tick();
     let mut result = Vec::new();
     const BULK_NUM: usize = 4096;
