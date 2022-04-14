@@ -37,7 +37,7 @@ This program will and will only communicate with the Cloudflare server with HTTP
 
 ## 🤯 Disclaimer
 
-Use it do anything at your own risk.
+Do anything with it at your own risk.
 
 ## ❓ Why not IPv6？
 
