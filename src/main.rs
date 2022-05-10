@@ -6,6 +6,7 @@ use i18n::{en_us::en_us, zh_cn::zh_cn};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    utils::get_args(); // To display help info without asking language
     let items = vec!["简体中文", "English (US)"];
     let selection = Select::with_theme(&ColorfulTheme::default())
         .items(&items)

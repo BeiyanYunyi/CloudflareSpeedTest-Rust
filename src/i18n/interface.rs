@@ -5,6 +5,8 @@ pub struct DownloadControllerI18n<'a> {
 }
 
 pub struct PingControllerI18n<'a> {
+    pub reading_custom_file: &'a str,
+    pub reading_custom_file_error: &'a str,
     pub getting_ips_from_cloudflare: &'a str,
     pub getting_ips_from_cloudflare_success: &'a str,
     pub getting_ips_from_cloudflare_failed: &'a str,

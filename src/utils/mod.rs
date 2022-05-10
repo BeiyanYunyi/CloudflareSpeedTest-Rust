@@ -10,3 +10,6 @@ pub use bulk_ping::bulk_ping;
 mod real_delay;
 pub use real_delay::bulk_real_delay;
 pub use real_delay::RealDelayRes;
+
+mod args;
+pub use args::get_args;

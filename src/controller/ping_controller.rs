@@ -1,5 +1,6 @@
 use crate::i18n::interface::I18nItems;
 use crate::utils::bulk_ping;
+use crate::utils::get_args;
 use dialoguer::Input;
 use indicatif::ProgressBar;
 use ipnet::Ipv4Net;
@@ -11,47 +12,62 @@ use std::time::Duration;
 /// ## get_all_ips_v4
 /// 获取 IPv4 IP，并返回
 async fn get_all_ips_v4(i18n: &I18nItems<'_>) -> Result<Vec<IpAddr>, Box<dyn std::error::Error>> {
-    println!("{}", i18n.ping_controller_i18n.getting_ips_from_cloudflare);
-    let client = reqwest::ClientBuilder::new()
-        .timeout(Duration::from_secs(5))
-        .build()?;
-    let cf_ips = client.get("https://www.cloudflare.com/ips-v4").send().await;
-    let ip_range: IpRange<Ipv4Net> = match cf_ips {
-        Ok(res) => {
+    let args = get_args();
+    let ip_range: IpRange<Ipv4Net> = match args.custom_ip_file {
+        Some(route) => {
             println!(
-                "{}",
-                i18n.ping_controller_i18n
-                    .getting_ips_from_cloudflare_success
+                "{}: {}",
+                i18n.ping_controller_i18n.reading_custom_file, route
             );
-            let res = res.text().await?;
-            let res: Vec<&str> = res.trim().split("\n").collect();
-            res.iter().map(|s| s.parse().unwrap()).collect()
+            let txt = std::fs::read_to_string(route)
+                .expect(i18n.ping_controller_i18n.reading_custom_file_error);
+            let txt: Vec<&str> = txt.trim().split("\n").collect();
+            txt.iter().map(|s| s.parse().unwrap()).collect()
         }
-        Err(_) => {
-            println!(
-                "{}",
-                i18n.ping_controller_i18n.getting_ips_from_cloudflare_failed
-            );
-            [
-                "173.245.48.0/20",
-                "103.21.244.0/22",
-                "103.22.200.0/22",
-                "103.31.4.0/22",
-                "141.101.64.0/18",
-                "108.162.192.0/18",
-                "190.93.240.0/20",
-                "188.114.96.0/20",
-                "197.234.240.0/22",
-                "198.41.128.0/17",
-                "162.158.0.0/15",
-                "104.16.0.0/13",
-                "104.24.0.0/14",
-                "172.64.0.0/13",
-                "131.0.72.0/22",
-            ]
-            .iter()
-            .map(|s| s.parse().unwrap())
-            .collect()
+        None => {
+            let client = reqwest::ClientBuilder::new()
+                .timeout(Duration::from_secs(5))
+                .build()?;
+            let cf_ips = client.get("https://www.cloudflare.com/ips-v4").send().await;
+            println!("{}", i18n.ping_controller_i18n.getting_ips_from_cloudflare);
+            match cf_ips {
+                Ok(res) => {
+                    println!(
+                        "{}",
+                        i18n.ping_controller_i18n
+                            .getting_ips_from_cloudflare_success
+                    );
+                    let res = res.text().await?;
+                    let res: Vec<&str> = res.trim().split("\n").collect();
+                    res.iter().map(|s| s.parse().unwrap()).collect()
+                }
+                Err(_) => {
+                    println!(
+                        "{}",
+                        i18n.ping_controller_i18n.getting_ips_from_cloudflare_failed
+                    );
+                    [
+                        "173.245.48.0/20",
+                        "103.21.244.0/22",
+                        "103.22.200.0/22",
+                        "103.31.4.0/22",
+                        "141.101.64.0/18",
+                        "108.162.192.0/18",
+                        "190.93.240.0/20",
+                        "188.114.96.0/20",
+                        "197.234.240.0/22",
+                        "198.41.128.0/17",
+                        "162.158.0.0/15",
+                        "104.16.0.0/13",
+                        "104.24.0.0/14",
+                        "172.64.0.0/13",
+                        "131.0.72.0/22",
+                    ]
+                    .iter()
+                    .map(|s| s.parse().unwrap())
+                    .collect()
+                }
+            }
         }
     };
     let mut ips_vec_temp: Vec<Ipv4Addr> = ip_range

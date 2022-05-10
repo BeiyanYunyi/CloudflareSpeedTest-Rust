@@ -1,6 +1,6 @@
 [package]
 name = "cfst"
-version = "1.0.0"
+version = "1.2.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -16,3 +16,4 @@ random-number = "0.1.7"
 indicatif = "0.16.2"
 relative-path = "1.7.0"
 dialoguer = "0.10.0"
+clap = { version = "3.1.6", features = ["derive"] }

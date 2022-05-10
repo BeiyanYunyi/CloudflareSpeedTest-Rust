@@ -7,6 +7,8 @@ pub fn zh_cn<'a>() -> I18nItems<'a> {
         total_after_num: "个 ip 进行下载速度测试",
     };
     let ping_controller_zh_cn = PingControllerI18n {
+        reading_custom_file: "从自定义 IP 文件获取 IP",
+        reading_custom_file_error:"无法读取文件",
         getting_ips_from_cloudflare: "正在从 Cloudflare 获取 IP 列表",
         getting_ips_from_cloudflare_success: "从 Cloudflare 获取 IP 列表成功",
         getting_ips_from_cloudflare_failed: "从 Cloudflare 获取 IP 列表失败，使用内置 IP 列表",

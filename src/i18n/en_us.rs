@@ -7,6 +7,8 @@ pub fn en_us<'a>() -> I18nItems<'a> {
         total_after_num: "IPs",
     };
     let ping_controller_i18n = PingControllerI18n {
+        reading_custom_file: "Reading custom IP file",
+        reading_custom_file_error:"Cannot read custom IP file",
         getting_ips_from_cloudflare: "Getting IP List from Cloudflare",
         getting_ips_from_cloudflare_success: "Success",
         getting_ips_from_cloudflare_failed: "Failed. Using internal IP List as fallback",
