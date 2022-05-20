@@ -13,3 +13,7 @@ pub use real_delay::RealDelayRes;
 
 mod args;
 pub use args::get_args;
+
+mod get_all_ips;
+pub use get_all_ips::get_all_ips_v4;
+pub use get_all_ips::get_all_ips_v6;
