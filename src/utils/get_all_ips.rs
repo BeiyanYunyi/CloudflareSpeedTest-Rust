@@ -7,7 +7,7 @@ use random_number::random;
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 use std::time::Duration;
 
-const IP_CHUNK: u64 = 512;
+const IP_CHUNK: u64 = 4096;
 
 /// ## get_all_ips_v4
 /// 获取 IPv4 IP，并返回
@@ -15,7 +15,7 @@ pub async fn get_all_ips_v4(
     i18n: &I18nItems<'_>,
 ) -> Result<Vec<IpAddr>, Box<dyn std::error::Error>> {
     let args = get_args();
-    let ip_range: IpRange<Ipv4Net> = match args.custom_ip_file {
+    let mut ip_range: IpRange<Ipv4Net> = match args.custom_ip_file {
         Some(route) => {
             println!(
                 "{}: {}",
@@ -72,6 +72,7 @@ pub async fn get_all_ips_v4(
             }
         }
     };
+    ip_range.simplify();
     let mut ips_vec_temp: Vec<Ipv4Addr> = ip_range
         .iter()
         .flat_map(|ipv4_net| ipv4_net.hosts())
@@ -108,7 +109,7 @@ pub async fn get_all_ips_v6(
     i18n: &I18nItems<'_>,
 ) -> Result<Vec<IpAddr>, Box<dyn std::error::Error>> {
     let args = get_args();
-    let ip_range: IpRange<Ipv6Net> = match args.custom_ip_file {
+    let mut ip_range: IpRange<Ipv6Net> = match args.custom_ip_file {
         Some(route) => {
             println!(
                 "{}: {}",
@@ -157,6 +158,7 @@ pub async fn get_all_ips_v6(
             }
         }
     };
+    ip_range.simplify();
     let ipv6_net_vec = ip_range
         .iter()
         .flat_map(|ipv6_net| ipv6_net.subnets(48).unwrap())
@@ -199,7 +201,6 @@ pub async fn get_all_ips_v6(
             ((octets[14] as u16) << 8) | octets[15] as u16,
         );
         if !rand_ips_vec.contains(&new_ip) {
-            println!("{}", new_ip);
             rand_ips_vec.push(new_ip);
         }
     }
