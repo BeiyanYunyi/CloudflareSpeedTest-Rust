@@ -1,7 +1,8 @@
 use crate::utils::ping;
 use futures::future::join_all;
+use random_number::random;
 use std::net::IpAddr::{V4, V6};
-use surge_ping::{Client, Config, ICMP};
+use surge_ping::{Client, Config, PingIdentifier, ICMP};
 
 /// ## bulk_ping
 /// 批量 Ping
@@ -15,7 +16,8 @@ pub async fn bulk_ping<'a>(
     };
     let mut tasks = vec![];
     for ip in ips {
-        let pinger = client.pinger(ip).await;
+        let rand_num: u16 = random!();
+        let pinger = client.pinger(ip, PingIdentifier(rand_num)).await;
         tasks.push(tokio::spawn(ping(ip, pinger)));
     }
     let task_results = join_all(tasks).await;

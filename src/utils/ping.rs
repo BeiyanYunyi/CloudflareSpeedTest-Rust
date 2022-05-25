@@ -1,6 +1,6 @@
 use std::net::IpAddr;
 use std::time::Duration;
-use surge_ping::{IcmpPacket, Pinger};
+use surge_ping::{IcmpPacket, PingSequence, Pinger};
 use tokio::time;
 
 /// ## ping
@@ -9,13 +9,14 @@ pub async fn ping(
     ip: IpAddr,
     mut pinger: Pinger,
 ) -> Result<(IpAddr, Duration), Box<dyn std::error::Error + Send + Sync>> {
+    const PAYLOAD: [u8; 64] = [255; 64];
     let timeout = Duration::from_secs(2);
-    pinger.size(56).timeout(timeout);
+    pinger.timeout(timeout);
     let mut avg_time = Duration::from_secs(0);
     let mut interval = time::interval(Duration::from_secs(1));
     for idx in 0..5 {
         interval.tick().await;
-        match pinger.ping(idx).await {
+        match pinger.ping(PingSequence(idx), &PAYLOAD).await {
             Ok((IcmpPacket::V4(_packet), dur)) => {
                 avg_time += dur;
             }

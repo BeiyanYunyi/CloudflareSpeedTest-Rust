@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 reqwest = { version = "0.11", features = ["json"] }
 tokio = { version = "1", features = ["full"] }
-surge-ping = "0.5.3"
+surge-ping = "0.7.0"
 iprange = "0.6.7"
 ipnet = "2.4.0"
 futures = "0.3.21"
