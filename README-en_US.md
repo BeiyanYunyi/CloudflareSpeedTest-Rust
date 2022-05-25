@@ -29,10 +29,23 @@ sudo ./target/release/cfst # sudo if you're using Linux
 
 ### Format
 
+#### IPv4
+
 ```plaintext
 173.245.48.0/20
 141.101.64.0/18
 131.0.72.0/22
+...
+```
+
+#### IPv6
+
+```plaintext
+2606:4700:3000::/48
+2606:4700:3001::/48
+2606:4700:3002::/48
+2606:4700:3003::/48
+2606:4700:3004::/48
 ...
 ```
 
@@ -62,9 +75,13 @@ This program will and will only communicate with the Cloudflare server with HTTP
 
 Do anything with it at your own risk.
 
-## ❓ Why not IPv6？
+## 📝 IPv6 Special Usage Notes
 
-It is actually possible to support IPv6, with a few lines of code change. However, neither my house nor my school has IPv6, so I don't have the need for it.
+As with IPv4, the project supports getting available IPs from [Cloudflare's IP list](https://www.cloudflare.com/ips-v6), but the vast majority of IPs in this IPv6 list are not available.
+
+I got a list from [CloudflareSpeedTest](https://github.com/XIU2/CloudflareSpeedTest) and hardcoded it into the program. This list is very available, but its access and security are not clear.
+
+Those who are concerned about IP address security can have the program get the IP from Cloudflare, those who want to be more efficient can have the program use the built-in IP list.
 
 ## 🧑‍🏭 LICENSE
 

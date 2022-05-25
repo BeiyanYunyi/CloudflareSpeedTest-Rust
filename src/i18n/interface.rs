@@ -10,6 +10,8 @@ pub struct PingControllerI18n<'a> {
     pub getting_ips_from_cloudflare: &'a str,
     pub getting_ips_from_cloudflare_success: &'a str,
     pub getting_ips_from_cloudflare_failed: &'a str,
+    pub internal_or_online: &'a str,
+    pub generating_ips: &'a str,
     pub prompt_part1: &'a str,
     pub prompt_part2: &'a str,
     pub prompt_part3: &'a str,

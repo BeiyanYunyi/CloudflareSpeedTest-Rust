@@ -17,3 +17,6 @@ pub use args::get_args;
 mod get_all_ips;
 pub use get_all_ips::get_all_ips_v4;
 pub use get_all_ips::get_all_ips_v6;
+
+mod ipv6_range;
+pub use ipv6_range::IPv6Range;

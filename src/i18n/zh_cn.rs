@@ -8,10 +8,12 @@ pub fn zh_cn<'a>() -> I18nItems<'a> {
     };
     let ping_controller_zh_cn = PingControllerI18n {
         reading_custom_file: "从自定义 IP 文件获取 IP",
-        reading_custom_file_error:"无法读取文件",
+        reading_custom_file_error: "无法读取文件",
         getting_ips_from_cloudflare: "正在从 Cloudflare 获取 IP 列表",
         getting_ips_from_cloudflare_success: "从 Cloudflare 获取 IP 列表成功",
         getting_ips_from_cloudflare_failed: "从 Cloudflare 获取 IP 列表失败，使用内置 IP 列表",
+        internal_or_online: "Cloudflare 的在线 IPv6 地址列表中绝大多数地址不可用，使用内置列表吗？",
+        generating_ips: "正在随机生成待 ping 的 IP 列表",
         prompt_part1: "请输入测试轮数 (0 ≤ x ≤ ",
         prompt_part2: ") (每轮 ",
         prompt_part3: " 个，用时 10 秒，互不重复)",

@@ -12,6 +12,8 @@ pub fn en_us<'a>() -> I18nItems<'a> {
         getting_ips_from_cloudflare: "Getting IP List from Cloudflare",
         getting_ips_from_cloudflare_success: "Success",
         getting_ips_from_cloudflare_failed: "Failed. Using internal IP List as fallback",
+        internal_or_online: "Most of the addresses in Cloudflare's online IPv6 address list are not available, use the built-in list?",
+        generating_ips: "Generating IP list...",
         prompt_part1: "Input test rounds (0 ≤ x ≤ ",
         prompt_part2: ") (each round will take 10 seconds to test ",
         prompt_part3: " IPs)",
