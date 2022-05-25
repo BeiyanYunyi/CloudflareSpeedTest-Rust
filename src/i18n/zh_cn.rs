@@ -35,7 +35,7 @@ pub fn zh_cn<'a>() -> I18nItems<'a> {
     let zh_cn_i18n_items = I18nItems {
         download_controller_i18n: download_controller_zh_cn,
         ping_controller_i18n: ping_controller_zh_cn,
-        real_delay_controller_i18n: "将进行真实延迟测试以获得 10 个可用 ip",
+        real_delay_controller_i18n: "将进行真实延迟测试以获得 50 个可用 ip",
         main_i18n,
     };
     return zh_cn_i18n_items;

@@ -35,7 +35,7 @@ pub fn en_us<'a>() -> I18nItems<'a> {
     let en_us_i18n_items = I18nItems {
         download_controller_i18n,
         ping_controller_i18n,
-        real_delay_controller_i18n: "Will test real delay to get 10 avaliable IPs",
+        real_delay_controller_i18n: "Will test real delay to get 50 avaliable IPs",
         main_i18n,
     };
     return en_us_i18n_items;
