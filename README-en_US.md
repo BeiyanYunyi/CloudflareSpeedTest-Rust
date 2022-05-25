@@ -81,7 +81,7 @@ As with IPv4, the project supports getting available IPs from [Cloudflare's IP l
 
 I got a list from [CloudflareSpeedTest](https://github.com/XIU2/CloudflareSpeedTest) and hardcoded it into the program. This list is very available, but its access and security are not clear.
 
-Those who are concerned about IP address security can have the program get the IP from Cloudflare, those who want to be more efficient can have the program use the built-in IP list.
+If you are concerned about IP address security, you can let the program get IPs from Cloudflare (recommended test rounds are set to 20 or more), and if you want to be more efficient, you can let the program use the built-in IP list.
 
 ## 🧑‍🏭 LICENSE
 

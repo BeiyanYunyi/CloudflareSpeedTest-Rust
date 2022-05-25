@@ -87,7 +87,7 @@ cfst.exe -c <FILE>
 
 我从 [CloudflareSpeedTest](https://github.com/XIU2/CloudflareSpeedTest) 获取了一份列表并硬编码到了程序中。这份列表的可用度很高，但其获取方式与安全性都尚不明确。
 
-介意 IP 地址安全性的可以让程序从 Cloudflare 获取 IP，希望效率更高的可以让程序使用内置的 IP 列表。
+介意 IP 地址安全性的可以让程序从 Cloudflare 获取 IP（推荐测试轮数设为 20 轮以上），希望效率更高的可以让程序使用内置的 IP 列表。
 
 ## 🧑‍🏭 开源协议
 
