@@ -1,5 +1,6 @@
 mod controller;
 use dialoguer::{theme::ColorfulTheme, Confirm, Select};
+mod data;
 mod i18n;
 mod utils;
 use i18n::{en_us::en_us, zh_cn::zh_cn};
