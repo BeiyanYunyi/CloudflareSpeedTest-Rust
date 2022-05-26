@@ -6,6 +6,7 @@ use indicatif::ProgressBar;
 use ipnet::{Ipv4Net, Ipv6Net};
 use iprange::IpRange;
 use random_number::random;
+use std::collections::HashSet;
 use std::net::{IpAddr, Ipv4Addr};
 use std::time::Duration;
 
@@ -136,20 +137,23 @@ pub async fn get_all_ips_v6(
     .iter()
     .map(|ipv6_net| IPv6Range::new(ipv6_net))
     .collect::<Vec<IPv6Range>>();
-  // 算法问题（数组查重，复杂度O(N^2)），总轮数过高会产生过多的资源消耗
-  const TOTAL_LENGTH: u64 = 256 * IP_CHUNK;
-  let rand_num = input_num_of_ips(TOTAL_LENGTH, i18n);
-  let mut rand_ips_vec = Vec::new();
+  let mut total_length = 0u64;
+  ip_range.iter().for_each(|ipv6_net| {
+    total_length =
+      total_length.saturating_add(2u64.saturating_pow(128u32 - (ipv6_net.prefix_len() as u32)));
+  });
+  let rand_num = input_num_of_ips(total_length, i18n);
+  let mut rand_ips_hashset = HashSet::new();
   let pb = ProgressBar::new((rand_num * IP_CHUNK).try_into().unwrap());
   pb.tick();
   pb.println(i18n.ping_controller_i18n.generating_ips);
-  while (rand_ips_vec.len() as u64) < (rand_num * IP_CHUNK) {
+  while (rand_ips_hashset.len() as u64) < (rand_num * IP_CHUNK) {
     let rand_ip = ipv6_net_vec[random!(0..ipv6_net_vec.len())].get_random_ip();
-    if !rand_ips_vec.contains(&rand_ip) {
-      rand_ips_vec.push(rand_ip);
+    if !rand_ips_hashset.contains(&rand_ip) {
+      rand_ips_hashset.insert(rand_ip);
       pb.inc(1);
     }
   }
   pb.finish();
-  return Ok(rand_ips_vec);
+  return Ok(rand_ips_hashset.iter().map(|ele| ele.clone()).collect());
 }
