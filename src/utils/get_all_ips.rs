@@ -155,5 +155,5 @@ pub async fn get_all_ips_v6(
     }
   }
   pb.finish();
-  return Ok(rand_ips_hashset.iter().map(|ele| ele.clone()).collect());
+  return Ok(rand_ips_hashset.iter().map(|ele| *ele).collect());
 }
