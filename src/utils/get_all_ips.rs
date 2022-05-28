@@ -133,7 +133,7 @@ pub async fn get_all_ips_v6(
   let ip_range: IpRange<Ipv6Net> = txt.trim().split("\n").map(|s| s.parse().unwrap()).collect();
   // Disable simplify to make custom ranks possible.
   // ip_range.simplify();
-  let ipv6_net_vec = ip_range
+  let mut ipv6_net_vec = ip_range
     .iter()
     .map(|ipv6_net| IPv6Range::new(ipv6_net))
     .collect::<Vec<IPv6Range>>();
@@ -148,7 +148,8 @@ pub async fn get_all_ips_v6(
   pb.tick();
   pb.println(i18n.ping_controller_i18n.generating_ips);
   while (rand_ips_hashset.len() as u64) < (rand_num * IP_CHUNK) {
-    let rand_ip = ipv6_net_vec[random!(0..ipv6_net_vec.len())].get_random_ip();
+    let len = ipv6_net_vec.len();
+    let rand_ip = ipv6_net_vec[random!(0..len)].get_random_ip();
     if !rand_ips_hashset.contains(&rand_ip) {
       rand_ips_hashset.insert(rand_ip);
       pb.inc(1);

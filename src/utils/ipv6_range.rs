@@ -1,5 +1,8 @@
 use ipnet::Ipv6Net;
-use random_number::random_fill;
+use rand::{
+  prelude::{thread_rng, SeedableRng, SmallRng},
+  Rng,
+};
 use std::net::IpAddr;
 
 /// # IPv6Range
@@ -9,13 +12,16 @@ use std::net::IpAddr;
 pub struct IPv6Range {
   prefix_length: usize,
   network_str: String,
+  rng: SmallRng,
 }
 
 impl IPv6Range {
   pub fn new(ipv6_net: Ipv6Net) -> IPv6Range {
+    let mut thread_rng = thread_rng();
     IPv6Range {
       prefix_length: ipv6_net.prefix_len() as usize,
       network_str: format!("{}", ipv6_net.network()).replace(":", ""),
+      rng: SmallRng::from_rng(&mut thread_rng).unwrap(),
     }
   }
   fn get_bit_ary_from_letter(letter: char) -> [bool; 4] {
@@ -69,20 +75,16 @@ impl IPv6Range {
     }
     return bit_ary;
   }
-  fn get_random_ip_bit_ary(&self) -> [bool; 128] {
+  fn get_random_ip_bit_ary(&mut self) -> [bool; 128] {
     let mut bit_ary = self.get_bit_ary();
-    let mut rand_ary = [0u8; 128];
-    random_fill!(rand_ary, 0..=1);
+    let mut rand_ary = [false; 128];
+    self.rng.fill(&mut rand_ary);
     for i in self.prefix_length..bit_ary.len() {
-      if rand_ary[i] == 0 {
-        bit_ary[i] = false;
-      } else {
-        bit_ary[i] = true;
-      }
+      bit_ary[i] = rand_ary[i];
     }
     return bit_ary;
   }
-  pub fn get_random_ip(&self) -> IpAddr {
+  pub fn get_random_ip(&mut self) -> IpAddr {
     let bit_ary = self.get_random_ip_bit_ary();
     let mut string = String::new();
     for i in 0..32 {

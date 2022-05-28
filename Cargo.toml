@@ -17,3 +17,4 @@ indicatif = "0.16.2"
 relative-path = "1.7.0"
 dialoguer = "0.10.0"
 clap = { version = "3.1.6", features = ["derive"] }
+rand = { version = "0.8.5", features = ["small_rng"] }
