@@ -1,4 +1,6 @@
-use crate::i18n::interface::{DownloadControllerI18n, I18nItems, MainI18n, PingControllerI18n};
+use crate::i18n::interface::{
+  ChooseIPsI18n, DownloadControllerI18n, I18nItems, MainI18n, PingControllerI18n,
+};
 
 pub fn zh_cn<'a>() -> I18nItems<'a> {
   let download_controller_zh_cn = DownloadControllerI18n {
@@ -11,7 +13,8 @@ pub fn zh_cn<'a>() -> I18nItems<'a> {
     reading_custom_file_error: "无法读取文件",
     getting_ips_from_cloudflare: "正在从 Cloudflare 获取 IP 列表",
     getting_ips_from_cloudflare_success: "从 Cloudflare 获取 IP 列表成功",
-    getting_ips_from_cloudflare_failed: "从 Cloudflare 获取 IP 列表失败，使用内置 IP 列表",
+    getting_ips_from_cloudflare_failed: "从 Cloudflare 获取 IP 列表失败",
+    choose_ips: "选择 IP 列表",
     internal_or_online: "Cloudflare 的在线 IPv6 地址列表中绝大多数地址不可用，使用内置列表吗？",
     generating_ips: "正在随机生成待 ping 的 IP 列表",
     prompt_part1: "请输入测试轮数 (0 ≤ x ≤ ",
@@ -32,10 +35,16 @@ pub fn zh_cn<'a>() -> I18nItems<'a> {
     cannot_get_dir: "无法获取程序运行目录",
     failed_to_write: "文件写入失败",
   };
+  let choose_ips_i18n = ChooseIPsI18n {
+    use_original_ips: "使用内置 IP 列表",
+    use_tested_ips: "使用测试过的 IP 列表",
+    use_online_ips: "从 Cloudflare 获取 IP 列表",
+  };
   let zh_cn_i18n_items = I18nItems {
     download_controller_i18n: download_controller_zh_cn,
     ping_controller_i18n: ping_controller_zh_cn,
     real_delay_controller_i18n: "将进行真实延迟测试以获得 50 个可用 ip",
+    choose_ips_i18n,
     main_i18n,
   };
   return zh_cn_i18n_items;

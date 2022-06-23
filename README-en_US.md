@@ -75,7 +75,13 @@ This program will and will only communicate with the Cloudflare server with HTTP
 
 Do anything with it at your own risk.
 
-## 📝 IPv6 Special Usage Notes
+## 📝 Special Notes
+
+### For IPv4
+
+There are two copies of IPv4 IPs built into the program, one of which will be consistent with [Cloudflare's IP list](https://www.cloudflare.com/ips-v4). The other one was sent to me by a user, and may be of higher quality than Cloudflare's official list, but its access and security are not yet clear, so use at your own risk.
+
+### For IPv6
 
 As with IPv4, the project supports getting available IPs from [Cloudflare's IP list](https://www.cloudflare.com/ips-v6), but the vast majority of IPs in this IPv6 list are not available.
 

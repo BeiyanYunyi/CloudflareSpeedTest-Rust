@@ -1,4 +1,6 @@
-use crate::i18n::interface::{DownloadControllerI18n, I18nItems, MainI18n, PingControllerI18n};
+use crate::i18n::interface::{
+  ChooseIPsI18n, DownloadControllerI18n, I18nItems, MainI18n, PingControllerI18n,
+};
 
 pub fn en_us<'a>() -> I18nItems<'a> {
   let download_controller_i18n = DownloadControllerI18n {
@@ -11,7 +13,8 @@ pub fn en_us<'a>() -> I18nItems<'a> {
         reading_custom_file_error:"Cannot read custom IP file",
         getting_ips_from_cloudflare: "Getting IP List from Cloudflare",
         getting_ips_from_cloudflare_success: "Success",
-        getting_ips_from_cloudflare_failed: "Failed. Using internal IP List as fallback",
+        getting_ips_from_cloudflare_failed: "Failed getting IP List from Cloudflare",
+        choose_ips: "Choose IP List",
         internal_or_online: "Most of the addresses in Cloudflare's online IPv6 address list are not available, use the built-in list?",
         generating_ips: "Generating IP list...",
         prompt_part1: "Input test rounds (0 ≤ x ≤ ",
@@ -32,10 +35,16 @@ pub fn en_us<'a>() -> I18nItems<'a> {
     cannot_get_dir: "Failed to get the program's working directory",
     failed_to_write: "Failed to write to file",
   };
+  let choose_ips_i18n = ChooseIPsI18n {
+    use_original_ips: "Use original IP list",
+    use_tested_ips: "Use tested IP list",
+    use_online_ips: "Get IP list from Cloudflare",
+  };
   let en_us_i18n_items = I18nItems {
     download_controller_i18n,
     ping_controller_i18n,
     real_delay_controller_i18n: "Will test real delay to get 50 avaliable IPs",
+    choose_ips_i18n,
     main_i18n,
   };
   return en_us_i18n_items;

@@ -1,7 +1,8 @@
-use crate::data::{IPV4_IPS, IPV6_IPS};
+use crate::data::{IPV4_IPS_ORIGINAL, IPV4_IPS_TESTED, IPV6_IPS};
 use crate::i18n::interface::I18nItems;
 use crate::utils::{get_args, IPv6Range};
-use dialoguer::{Confirm, Input};
+use async_recursion::async_recursion;
+use dialoguer::{theme::ColorfulTheme, Confirm, Input, Select};
 use indicatif::ProgressBar;
 use ipnet::{Ipv4Net, Ipv6Net};
 use iprange::IpRange;
@@ -36,6 +37,42 @@ fn input_num_of_ips(max: u64, i18n: &I18nItems<'_>) -> u64 {
     .expect(i18n.ping_controller_i18n.invalid_input)
 }
 
+#[async_recursion]
+async fn choose_ipv4_ips(i18n: &I18nItems<'_>) -> Result<String, Box<dyn std::error::Error>> {
+  let items = vec![
+    i18n.choose_ips_i18n.use_online_ips,
+    i18n.choose_ips_i18n.use_original_ips,
+    i18n.choose_ips_i18n.use_tested_ips,
+  ];
+  let selection = Select::with_theme(&ColorfulTheme::default())
+    .items(&items)
+    .default(0)
+    .interact()
+    .expect(i18n.ping_controller_i18n.invalid_input);
+  let res = match selection {
+    0 => {
+      let client = reqwest::ClientBuilder::new()
+        .timeout(Duration::from_secs(5))
+        .build()?;
+      let online_ips_res = client.get("https://www.cloudflare.com/ips-v4").send().await;
+      if let Ok(res) = online_ips_res {
+        let ips_str = res.text().await?;
+        ips_str
+      } else {
+        println!(
+          "{}",
+          i18n.ping_controller_i18n.getting_ips_from_cloudflare_failed
+        );
+        choose_ipv4_ips(i18n).await?
+      }
+    }
+    1 => IPV4_IPS_ORIGINAL.to_string(),
+    2 => IPV4_IPS_TESTED.to_string(),
+    _ => IPV4_IPS_ORIGINAL.to_string(),
+  };
+  Ok(res)
+}
+
 /// ## get_all_ips_v4
 /// 获取 IPv4 IP，并返回
 pub async fn get_all_ips_v4(
@@ -50,24 +87,7 @@ pub async fn get_all_ips_v4(
       );
       std::fs::read_to_string(route).expect(i18n.ping_controller_i18n.reading_custom_file_error)
     }
-    None => {
-      let client = reqwest::ClientBuilder::new()
-        .timeout(Duration::from_secs(5))
-        .build()?;
-      let cf_ips = client.get("https://www.cloudflare.com/ips-v4").send().await;
-      println!("{}", i18n.ping_controller_i18n.getting_ips_from_cloudflare);
-      if let Ok(res) = cf_ips {
-        println!(
-          "{}",
-          i18n
-            .ping_controller_i18n
-            .getting_ips_from_cloudflare_success
-        );
-        res.text().await?
-      } else {
-        IPV4_IPS.to_string()
-      }
-    }
+    None => choose_ipv4_ips(i18n).await?,
   };
   let ip_range: IpRange<Ipv4Net> = txt.trim().split("\n").map(|s| s.parse().unwrap()).collect();
   // Disable simplify to make custom ranks possible.

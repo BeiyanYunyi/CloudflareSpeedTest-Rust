@@ -4,6 +4,12 @@ pub struct DownloadControllerI18n<'a> {
   pub testing: &'a str,
 }
 
+pub struct ChooseIPsI18n<'a> {
+  pub use_original_ips: &'a str,
+  pub use_tested_ips: &'a str,
+  pub use_online_ips: &'a str,
+}
+
 pub struct PingControllerI18n<'a> {
   pub reading_custom_file: &'a str,
   pub reading_custom_file_error: &'a str,
@@ -11,6 +17,7 @@ pub struct PingControllerI18n<'a> {
   pub getting_ips_from_cloudflare_success: &'a str,
   pub getting_ips_from_cloudflare_failed: &'a str,
   pub internal_or_online: &'a str,
+  pub choose_ips: &'a str,
   pub generating_ips: &'a str,
   pub prompt_part1: &'a str,
   pub prompt_part2: &'a str,
@@ -37,4 +44,5 @@ pub struct I18nItems<'a> {
   pub ping_controller_i18n: PingControllerI18n<'a>,
   pub real_delay_controller_i18n: &'a str,
   pub main_i18n: MainI18n<'a>,
+  pub choose_ips_i18n: ChooseIPsI18n<'a>,
 }

@@ -81,7 +81,13 @@ cfst.exe -c <FILE>
 
 想干嘛就干嘛。当然，后果自负。
 
-## 📝 IPv6 的特殊使用说明
+## 📝 特殊说明
+
+### IPv4 的内置 IP
+
+程序中内置了两份 IPv4 IP，其中一份会与 [Cloudflare 的 IP 列表](https://www.cloudflare.com/ips-v4)保持一致。另一份则是由一位用户发给我的，质量可能比 Cloudflare 官方的列表更高，但其获取方式与安全性都尚不明确，使用后果自负。
+
+### IPv6 的内置 IP
 
 与 IPv4 时一样，本项目支持从 [Cloudflare 的 IP 列表](https://www.cloudflare.com/ips-v6)获取可用 IP，但这份 IPv6 列表中绝大部分 IP 是不可用的。
 
