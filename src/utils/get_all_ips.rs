@@ -21,14 +21,14 @@ fn input_num_of_ips(max: u64, i18n: &I18nItems<'_>) -> u64 {
     .with_prompt::<String>(format!(
       "{}{}{}{}{}",
       i18n.ping_controller_i18n.prompt_part1,
-      max / IP_CHUNK,
+      (max / IP_CHUNK) + 1,
       i18n.ping_controller_i18n.prompt_part2,
       IP_CHUNK,
       i18n.ping_controller_i18n.prompt_part3,
     ))
     .default(1)
     .validate_with(|input: &u64| -> Result<(), &str> {
-      if *input * IP_CHUNK > max {
+      if (max / IP_CHUNK) + 1 < *input {
         return Err(i18n.ping_controller_i18n.invalid_input);
       }
       Ok(())
@@ -89,7 +89,17 @@ pub async fn get_all_ips_v4(
     }
     None => choose_ipv4_ips(i18n).await?,
   };
-  let ip_range: IpRange<Ipv4Net> = txt.trim().split("\n").map(|s| s.parse().unwrap()).collect();
+  let ip_range: IpRange<Ipv4Net> = txt
+    .trim()
+    .split("\n")
+    .map(|s| {
+      let mut st = String::from(s);
+      if !st.contains("/") {
+        st.push_str("/32");
+      }
+      st.parse().unwrap()
+    })
+    .collect();
   // Disable simplify to make custom ranks possible.
   // ip_range.simplify();
   let mut ips_vec_temp: Vec<Ipv4Addr> = ip_range
@@ -100,6 +110,9 @@ pub async fn get_all_ips_v4(
   let rand_num = input_num_of_ips(ips_vec_temp.len() as u64, i18n);
   for _ in 0..(rand_num * IP_CHUNK) {
     let len = ips_vec_temp.len();
+    if len <= 0 {
+      break;
+    }
     ips_vec.push(IpAddr::V4(ips_vec_temp.swap_remove(random!(0..len))))
   }
   return Ok(ips_vec);
@@ -150,7 +163,17 @@ pub async fn get_all_ips_v6(
       }
     }
   };
-  let ip_range: IpRange<Ipv6Net> = txt.trim().split("\n").map(|s| s.parse().unwrap()).collect();
+  let ip_range: IpRange<Ipv6Net> = txt
+    .trim()
+    .split("\n")
+    .map(|s| {
+      let mut st = String::from(s);
+      if !st.contains("/") {
+        st.push_str("/128");
+      }
+      st.parse().unwrap()
+    })
+    .collect();
   // Disable simplify to make custom ranks possible.
   // ip_range.simplify();
   let mut ipv6_net_vec = ip_range
@@ -167,12 +190,18 @@ pub async fn get_all_ips_v6(
   let pb = ProgressBar::new((rand_num * IP_CHUNK).try_into().unwrap());
   pb.tick();
   pb.println(i18n.ping_controller_i18n.generating_ips);
+  let mut conflict_count = 0;
   while (rand_ips_hashset.len() as u64) < (rand_num * IP_CHUNK) {
+    if conflict_count >= 1000 {
+      break;
+    }
     let len = ipv6_net_vec.len();
     let rand_ip = ipv6_net_vec[random!(0..len)].get_random_ip();
     if !rand_ips_hashset.contains(&rand_ip) {
       rand_ips_hashset.insert(rand_ip);
       pb.inc(1);
+    } else {
+      conflict_count += 1;
     }
   }
   pb.finish();
