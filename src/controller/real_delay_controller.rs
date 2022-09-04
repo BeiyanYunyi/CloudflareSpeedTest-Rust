@@ -15,7 +15,7 @@ pub async fn real_delay_controller(
   pb.println(format!("{}", i18n.real_delay_controller_i18n));
   let mut res_vec = Vec::new();
   let mut i_temp = 0;
-  while res_vec.len() < 50 && res_vec.len() != ips.len() && i_temp + 10 < ips.len() {
+  while res_vec.len() < 50 && res_vec.len() != ips.len() {
     let mut bulk_vec = Vec::new();
     for i in i_temp..i_temp + 10 {
       if i < ips.len() {
