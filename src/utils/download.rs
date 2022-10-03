@@ -20,12 +20,19 @@ pub async fn download(ip: IpAddr) -> Result<f64, Box<dyn std::error::Error>> {
   };
   let mut data_len: usize = 0;
   let now = std::time::Instant::now();
-  while let Some(chunk) = resp_raw.chunk().await? {
-    if now.elapsed().as_secs() <= 5 {
-      data_len += chunk.len();
-    } else {
-      data_len += chunk.len();
-      break;
+  loop {
+    let chunk_result = resp_raw.chunk().await;
+    match chunk_result {
+      Ok(Some(chunk)) => {
+        if now.elapsed().as_secs() <= 5 {
+          data_len += chunk.len();
+        } else {
+          data_len += chunk.len();
+          break;
+        }
+      }
+      Ok(None) => break,
+      Err(_) => return Ok(0f64),
     }
   }
   Ok(data_len as f64 / now.elapsed().as_secs_f64())
