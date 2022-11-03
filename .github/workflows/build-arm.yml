@@ -19,7 +19,7 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           install: |
             apt-get update && apt-get upgrade -y && apt-get install curl -y
-            curl https://sh.rustup.rs -sSf | sh -- -y
+            curl https://sh.rustup.rs -sSf | sh -s -- -y
             rustup toolchain install stable-aarch64-unknown-linux-musl
           run: |
             cargo build --release
