@@ -1,0 +1,36 @@
+name: Build ARM
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+jobs:
+  release-arm:
+    name: release ${{ matrix.target }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-pc-windows-gnu
+            archive: zip
+          - target: x86_64-unknown-linux-musl
+            archive: tar.gz tar.xz
+          - target: x86_64-apple-darwin
+            archive: zip
+    steps:
+      - uses: actions/checkout@master
+      - name: Compile and release
+        uses: uraimo/run-on-arch-action@v2.3.0
+        with: 
+          arch: aarch64
+          distro: ubuntu20.04
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          install: |
+            apt update && apt install rustup
+            rustup toolchain install stable
+            rustup default stable
+          run: |
+            cargo build --release
+            ls -la target/release
