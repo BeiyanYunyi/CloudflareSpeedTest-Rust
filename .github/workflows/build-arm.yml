@@ -18,7 +18,8 @@ jobs:
           distro: ubuntu20.04
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           install: |
-            apt update && apt install rustup
+            apt-get update && apt upgrade -y
+            curl https://sh.rustup.rs -sSf | sh
             rustup toolchain install stable
             rustup default stable
           run: |
