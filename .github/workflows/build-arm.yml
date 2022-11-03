@@ -20,8 +20,7 @@ jobs:
           install: |
             apt-get update && apt-get upgrade -y && apt-get install curl -y
             curl https://sh.rustup.rs -sSf | sh
-            rustup toolchain install stable -y
-            rustup default stable -y
+            rustup toolchain install -y stable-aarch64-unknown-linux-musl
           run: |
             cargo build --release
             ls -la target/release
