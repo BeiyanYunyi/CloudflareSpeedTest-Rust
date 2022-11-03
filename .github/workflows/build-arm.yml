@@ -20,7 +20,7 @@ jobs:
           install: |
             apt-get update && apt-get upgrade -y && apt-get install curl -y
             curl https://sh.rustup.rs -sSf | sh -s -- -y
+          run: |
             source "$HOME/.cargo/env"
             cargo build --release
-          run: |
             ls -la target/release
